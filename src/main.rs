@@ -10,15 +10,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let exec = Executor::new()?;
 
     // Create a chain of steps with two prompts
-    let chain: Chain<Executor> = Chain::new(vec![
-        // First step: make a personalized birthday email
+    let chain = Chain::new(vec![
+        // First step: make a general guide to learning the selected programming language 
         Step::for_prompt_template(
-            prompt!("You are a bot for making personalized greetings", "Make personalized birthday e-mail to the whole company for {{name}} who has their birthday on {{date}}. Include their name")
+            prompt!("You are a bot for guiding people who to becoming better a programmer", "Use science based research, along with incorporating meta-learning techniques to breakdown a list of what someone would need to do to become an industry expert in {{lang}} programming language")
         ),
 
-        // Second step: summarize the email into a tweet. Importantly, the text parameter becomes the result of the previous prompt.
+        // Second step: Explain the information given using chunking
         Step::for_prompt_template(
-            prompt!( "You are an assistant for managing social media accounts for a company", "Summarize this email into a tweet to be sent by the company, use emoji if you can. \n--\n{{text}}")
+            prompt!( "You are an IT industry expert who teaches people complex technological topics using chunking learning.", "Please explain {{text}} in detail and mention specific exercises and projects.")
         )
     ]);
 
@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let res = chain
         .run(
             // Create a Parameters object with key-value pairs for the placeholders
-            parameters!("name" => "Emil", "date" => "February 30th 2023"),
+            parameters!("lang" => "Rust"),
             &exec,
         )
         .await
